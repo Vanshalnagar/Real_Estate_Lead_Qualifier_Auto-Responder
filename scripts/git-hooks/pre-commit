@@ -1,0 +1,7 @@
+#!/bin/sh
+# Blocks commits that contain API keys, credentialed MongoDB URIs or any local .env secret value.
+# Installed by `npm run hooks:install` (sets core.hooksPath to scripts/git-hooks).
+node scripts/secret-scan.mjs --staged || {
+  echo "Commit blocked: remove the secret(s) above (keep them in .env files, which are git-ignored)."
+  exit 1
+}

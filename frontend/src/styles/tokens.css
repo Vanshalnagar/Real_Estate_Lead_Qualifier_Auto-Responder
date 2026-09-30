@@ -1,0 +1,110 @@
+/*
+ * NESTR. design tokens — extracted from the BLDR Framer template (see docs/DESIGN_INVENTORY.md).
+ * Used by the customer site AND the admin panel. Do not hard-code colours elsewhere.
+ */
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-400-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter Display'; src: url('/fonts/inter-display-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter Display'; src: url('/fonts/inter-display-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter Display'; src: url('/fonts/inter-display-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Inter Display'; src: url('/fonts/inter-display-600-italic.woff2') format('woff2'); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Inter Display'; src: url('/fonts/inter-display-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Fragment Mono'; src: url('/fonts/fragment-mono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
+:root {
+  /* surfaces */
+  --bg: #0d0d0d;
+  --surface: #1a1a1a;
+  --surface-2: #212121;
+  --surface-3: #262626;
+  --surface-4: #292929;
+  --surface-5: #2e2e2e;
+  --glass: rgba(33, 33, 33, 0.7);
+  --glass-card: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --overlay: rgba(13, 13, 13, 0.52);
+  --overlay-strong: rgba(20, 20, 20, 0.8);
+
+  /* accent */
+  --accent: #ff8a24;
+  --accent-strong: #f17101;
+  --accent-dark: #c25800;
+  --accent-gold: #de8f07;
+  --accent-glow: rgba(255, 138, 36, 0.45);
+
+  /* text */
+  --text: #ffffff;
+  --text-2: rgba(255, 255, 255, 0.7);
+  --text-3: rgba(255, 255, 255, 0.5);
+  --text-4: rgba(255, 255, 255, 0.3);
+  --grey-1: #c8c8c8;
+  --grey-2: #969696;
+  --grey-3: #828282;
+
+  /* lines */
+  --line: rgba(255, 255, 255, 0.1);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --line-3: rgba(255, 255, 255, 0.2);
+
+  /* status (admin) */
+  --ok: #3ecf8e;
+  --warn: #ffb020;
+  --danger: #ff5a4f;
+
+  /* type */
+  --font-display: 'Inter Display', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Fragment Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --ff-display: 'blwf' on, 'cv03' on, 'cv04' on, 'cv09' on, 'cv11' on;
+
+  --h1: 56px;
+  --h2: 48px;
+  --h3: 32px;
+  --h4: 20px;
+  --h5: 24px;
+  --body: 16px;
+  --reveal: 28px;
+
+  /* layout */
+  --max: 1440px;
+  --pad-x: 88px;
+  --frame: 8px;
+  --section-y: 120px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+
+  /* motion */
+  --ease: cubic-bezier(0.44, 0, 0.56, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --h1: 45px;
+    --h2: 40px;
+    --h3: 26px;
+    --h4: 16px;
+    --h5: 20px;
+    --reveal: 22px;
+    --pad-x: 48px;
+    --section-y: 88px;
+  }
+}
+
+@media (max-width: 809px) {
+  :root {
+    --h1: 36px;
+    --h2: 32px;
+    --h3: 20px;
+    --h4: 16px;
+    --h5: 20px;
+    --body: 13px;
+    --reveal: 18px;
+    --pad-x: 16px;
+    --section-y: 64px;
+  }
+}

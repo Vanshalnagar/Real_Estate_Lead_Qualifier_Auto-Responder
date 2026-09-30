@@ -1,0 +1,29 @@
+{
+  "name": "nestr-lead-qualifier",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Real Estate Lead Qualifier & Auto-Responder (NESTR.)",
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "dev": "concurrently -k -n backend,frontend -c yellow,cyan \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "seed": "npm run seed -w backend",
+    "test": "npm test -w backend",
+    "eval:llm": "npm run eval -w backend",
+    "test:integration": "npm run test:integration -w backend",
+    "setup:env": "node scripts/setup-env.mjs",
+    "secrets:scan": "node scripts/secret-scan.mjs",
+    "secrets:scan:dist": "npm run build -w frontend && node scripts/secret-scan.mjs --dir frontend/dist",
+    "hooks:install": "git config core.hooksPath scripts/git-hooks",
+    "visual": "node scripts/cdp-shots.mjs",
+    "visual:interactions": "node scripts/cdp-interactions.mjs",
+    "n8n:build": "node n8n/build-workflows.mjs",
+    "n8n:import": "bash n8n/import.sh",
+    "start:all": "npm run infra:up && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

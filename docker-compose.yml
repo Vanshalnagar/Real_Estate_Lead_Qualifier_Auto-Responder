@@ -1,0 +1,66 @@
+# NESTR. infrastructure: n8n (always) + optional local MongoDB (profile "local-mongo").
+#   docker compose up -d                              → n8n on http://localhost:5678
+#   docker compose --profile local-mongo up -d        → also mongo:7 on localhost:27017
+# All configuration comes from the root .env (see .env.example). No secrets in this file.
+name: nestr
+
+services:
+  n8n:
+    image: n8nio/n8n:2.41.3
+    container_name: nestr-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?set N8N_ENCRYPTION_KEY in .env}
+      GENERIC_TIMEZONE: Asia/Kolkata
+      TZ: Asia/Kolkata
+      N8N_HOST: localhost
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: http
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_BASE_URL:-http://localhost:5678/}
+      N8N_EDITOR_BASE_URL: http://localhost:5678/
+      N8N_SECURE_COOKIE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      N8N_RUNNERS_TASK_TIMEOUT: "300"
+      # The workflow reads non-secret config through $env (secrets stay in n8n credentials)
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "336"
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL:-http://host.docker.internal:4000}
+      GROQ_MODEL: ${GROQ_MODEL:-openai/gpt-oss-120b}
+      GROQ_REPLY_MODEL: ${GROQ_REPLY_MODEL:-openai/gpt-oss-20b}
+      GROQ_REASONING_EFFORT: ${GROQ_REASONING_EFFORT:-low}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-http://localhost:5173}
+      SHEETS_WEBAPP_URL: ${SHEETS_WEBAPP_URL:-}
+      WHATSAPP_PROVIDER: ${WHATSAPP_PROVIDER:-simulator}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID:-}
+      WHATSAPP_GRAPH_VERSION: ${WHATSAPP_GRAPH_VERSION:-v21.0}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    container_name: nestr-mongo
+    profiles: ["local-mongo"]
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  n8n_data:
+  mongo_data:

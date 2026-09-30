@@ -1,0 +1,141 @@
+/* Live property data (Apify → MagicBricks): sync badge, source links, real listing photos. */
+
+.sync-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 24px 0 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.sync-badge strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.sync-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 4px rgba(62, 207, 142, 0.15);
+}
+.sync-badge--stale .sync-badge__dot {
+  background: var(--warn);
+  box-shadow: 0 0 0 4px rgba(255, 176, 32, 0.15);
+}
+
+.lcard__source {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* featured cards with a single real photo */
+.pcard__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+.pcard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.pcard__source,
+.pd__provenance a,
+.match__source {
+  color: var(--accent);
+  font-weight: 600;
+}
+.pcard__source {
+  font-size: 14px;
+}
+.pcard__source:hover,
+.pd__provenance a:hover,
+.match__source:hover {
+  text-decoration: underline;
+}
+
+/* property detail */
+.pd__inactive {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(255, 176, 32, 0.12);
+  border: 1px solid rgba(255, 176, 32, 0.35);
+  color: #ffcf7a;
+  font-size: 14px;
+}
+.pd__photo {
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.pd__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pd__thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+.pd__thumbs button {
+  flex: none;
+  width: 84px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  opacity: 0.6;
+  border: 2px solid transparent;
+}
+.pd__thumbs button.is-active {
+  opacity: 1;
+  border-color: var(--accent);
+}
+.pd__thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pd__provenance {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* chatbot match cards with photo + source link */
+.match--live {
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+.match__img {
+  width: 64px;
+  height: 52px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex: none;
+}
+.match__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.match__title:hover {
+  color: var(--accent);
+}
+.match__source {
+  font-size: 12px;
+}

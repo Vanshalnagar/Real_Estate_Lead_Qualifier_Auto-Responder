@@ -1,0 +1,52 @@
+# Secrets — every .env file except the examples
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+*.pem
+*credentials*.json
+!n8n/credentials.manifest.json
+service-account*.json
+.clasprc.json
+
+# The original master prompt contains live API keys and the Atlas URI — never commit it
+CLAUDE_CODE_PROMPT.md
+PROMPT.md
+
+# Temporary n8n credential import files (import.sh deletes them, belt and braces)
+n8n/.tmp/
+
+# Dependencies / builds
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# n8n / mongo data (docker volumes live outside the repo; bind mounts would land here)
+n8n_data/
+.n8n/
+mongo_data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Large reference export (kept locally only)
+/BLDR _ Construction Company & General Contractors.html
+/BLDR _ Construction Company & General Contractors_files/
+/reference/BLDR _ Construction Company & General Contractors.html
+/reference/BLDR _ Construction Company & General Contractors_files/
+# Full-page captures are large; section screenshots + compare-*.jpg are kept
+/reference/screenshots/*-full.png
+/docs/visual-diff/*-full.png

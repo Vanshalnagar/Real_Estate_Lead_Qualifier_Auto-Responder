@@ -1,0 +1,66 @@
+{
+  "id": "nestrErrorHndlr1",
+  "name": "Lead Intake — Error Handler",
+  "active": false,
+  "nodes": [
+    {
+      "id": "err-001",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "err-002",
+      "name": "Report failure to backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nestrCredIntrnl1",
+          "name": "Backend Internal Secret"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_INTERNAL_URL }}/api/internal/n8n-error",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ executionId: $json.execution && $json.execution.id, workflowName: $json.workflow && $json.workflow.name, lastNodeExecuted: $json.execution && $json.execution.lastNodeExecuted, error: $json.execution && $json.execution.error ? $json.execution.error.message : null, url: $json.execution && $json.execution.url }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Report failure to backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "pinData": {},
+  "tags": [],
+  "versionId": "2f8a40e1-6ddf-736c-0df7-0461713e988e"
+}

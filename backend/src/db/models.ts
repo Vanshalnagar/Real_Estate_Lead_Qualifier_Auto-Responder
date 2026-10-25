@@ -212,16 +212,17 @@ const apifyStateSchema = new Schema(
   { timestamps: true },
 );
 
-/** Customer accounts (email + password and/or Google). Separate from `admins`. */
+/** Customer accounts managed by Clerk. Separate from `admins`; old fields remain for data migration. */
 const userSchema = new Schema(
   {
+    clerkId: { type: String, default: null, unique: true, sparse: true, index: true },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, default: null },
     googleId: { type: String, default: null, index: true, sparse: true },
     avatar: { type: String, default: null },
     phone: { type: String, default: null },
-    providers: [{ type: String, enum: ['password', 'google'] }],
+    providers: [{ type: String, enum: ['password', 'google', 'clerk'] }],
     lastLoginAt: { type: Date, default: null },
   },
   { timestamps: true },

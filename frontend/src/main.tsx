@@ -1,6 +1,7 @@
 import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ClerkProvider } from '@clerk/react';
 import { AuthProvider } from './lib/auth';
 import { ChatProvider } from './lib/chat';
 import { AccountPage, AuthPage } from './site/pages/Auth';
@@ -16,11 +17,17 @@ import './styles/auth.css';
 import './styles/live.css';
 
 const AdminApp = lazy(() => import('./admin/AdminApp'));
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
+
+if (!clerkPublishableKey || !/^pk_(test|live)_/.test(clerkPublishableKey)) {
+  throw new Error('VITE_CLERK_PUBLISHABLE_KEY must be a Clerk publishable key beginning with pk_test_ or pk_live_. Check frontend/.env.');
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <BrowserRouter>
+        <Routes>
         <Route
           path="/admin/*"
           element={
@@ -48,7 +55,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path="account" element={<AccountPage />} />
           <Route path="*" element={<Home />} />
         </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ClerkProvider>
   </StrictMode>,
 );

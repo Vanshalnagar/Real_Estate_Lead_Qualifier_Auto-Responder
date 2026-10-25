@@ -8,7 +8,7 @@ export const leadFormSchema = z.object({
     .string()
     .trim()
     .regex(/^[+\d][\d\s-]{7,16}$/, 'Please enter a valid phone number'),
-  intent: z.enum(['Buy', 'Rent', 'Invest'], { errorMap: () => ({ message: 'Choose buy, rent or invest' }) }),
+  intent: z.enum(['Buy', 'Rent', 'Invest'], { error: 'Choose buy, rent or invest' }),
   location: z.string().trim().min(2, 'Where are you looking?').max(120),
   budget: z.string().trim().max(60).optional().default(''),
   timeline: z.string().trim().max(60).optional().default(''),

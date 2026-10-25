@@ -29,6 +29,11 @@ npm run dev                # http://localhost:5173 (site) · /admin (lead desk) 
 
 Admin login: `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `backend/.env`. n8n: http://localhost:5678.
 
+Customer authentication uses Clerk. Set `CLERK_SECRET_KEY` in `backend/.env` and
+`VITE_CLERK_PUBLISHABLE_KEY` in `frontend/.env` using the selected Clerk application. Existing
+MongoDB customer records are linked to Clerk by verified email on first sign-in; admin authentication
+continues to use the local JWT login.
+
 ## Scripts
 
 | Command | What it does |

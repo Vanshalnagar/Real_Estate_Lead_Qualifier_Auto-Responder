@@ -28,8 +28,9 @@ const schema = z.object({
   N8N_WEBHOOK_URL: z.string().default('http://localhost:5678/webhook/lead-intake'),
   N8N_HEALTH_URL: z.string().default('http://localhost:5678/healthz'),
   N8N_TIMEOUT_MS: z.coerce.number().default(45000),
-  N8N_ENABLED: bool.default('true'),
+  N8N_ENABLED: bool.default(true),
   INTERNAL_API_SECRET: z.string().min(24),
+  CLERK_SECRET_KEY: z.string().default(''),
 
   SHEETS_WEBAPP_URL: z.string().default(''),
   SHEETS_WEBHOOK_TOKEN: z.string().default(''),
@@ -49,7 +50,7 @@ const schema = z.object({
 
   // Live property data: Apify (MagicBricks scraper). Server-side only.
   APIFY_API_TOKEN: z.string().default(''),
-  APIFY_ENABLED: bool.default('true'),
+  APIFY_ENABLED: bool.default(true),
   APIFY_ACTOR: z.string().default('thirdwatch~magicbricks-scraper'),
   /** How often the backend talks to Apify (collect finished runs, sync MongoDB, maybe start a scrape). */
   APIFY_SYNC_INTERVAL_MIN: z.coerce.number().min(1).default(10),

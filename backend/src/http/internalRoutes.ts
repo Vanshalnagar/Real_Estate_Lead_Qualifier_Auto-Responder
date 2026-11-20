@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { voiceInternalRouter } from './voiceRoutes.js';
 import { z } from 'zod';
 import { IntakeLog, Lead, Message } from '../db/models.js';
 import { logger } from '../logger.js';
@@ -11,6 +12,7 @@ import { asyncH, requireInternalSecret } from './middleware.js';
 
 export const internalRouter = Router();
 internalRouter.use(requireInternalSecret);
+internalRouter.use('/voice', voiceInternalRouter);
 
 const inboundSchema = z.object({
   channel: z.enum(['web_chat', 'web_form', 'google_form', 'whatsapp']),

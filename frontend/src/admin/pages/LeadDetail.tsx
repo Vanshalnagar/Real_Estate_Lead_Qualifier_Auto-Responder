@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { VoicePanel } from '../VoicePanel';
 import { CHANNEL_LABEL, dateTime, inr, STATUS_LABEL, TYPE_LABEL } from '../../lib/format';
 import type { MatchSummary } from '../../lib/types';
 import { useLive } from '../AdminApp';
@@ -17,6 +18,8 @@ interface Msg {
   createdAt: string;
 }
 interface Lead {
+  callConsent?: boolean;
+  doNotCall?: boolean;
   _id: string;
   channel: string;
   channels: string[];
@@ -177,6 +180,7 @@ export function LeadDetail() {
 
       <div className="ld__grid">
         <div className="ld__col">
+          <VoicePanel leadId={l._id} phone={l.contact.phone} consent={Boolean(l.callConsent)} dnc={Boolean(l.doNotCall)} onChange={load} />
           <section className="acard">
             <h2 className="h4">Conversation ({d.messages.length})</h2>
             <ol className="timeline">

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Button } from '../../components/Button';
-import { api } from '../../lib/api';
+import { api, setAdminToken } from '../../lib/api';
 
 export function Login({ onLogin }: { onLogin: (email: string) => void }) {
   const [error, setError] = useState('');
@@ -11,7 +11,8 @@ export function Login({ onLogin }: { onLogin: (email: string) => void }) {
     setBusy(true);
     setError('');
     try {
-      const r = await api<{ email: string }>('/admin/auth/login', { method: 'POST', json: { email: fd.get('email'), password: fd.get('password') } });
+      const r = await api<{ email: string; token?: string }>('/admin/auth/login', { method: 'POST', json: { email: fd.get('email'), password: fd.get('password') } });
+      setAdminToken(r.token || null);
       onLogin(r.email);
     } catch (err) {
       setError((err as Error).message);

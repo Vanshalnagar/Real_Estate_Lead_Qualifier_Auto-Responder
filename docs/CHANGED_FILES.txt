@@ -1,0 +1,53 @@
+ M .env.example
+ M .gitignore
+ M README.md
+ M backend/.env.example
+ M backend/package.json
+ M backend/src/app.ts
+ M backend/src/config.ts
+ M backend/src/db/models.ts
+ M backend/src/http/adminRoutes.ts
+ M backend/src/http/authRoutes.ts
+ M backend/src/http/internalRoutes.ts
+ M backend/src/http/middleware.ts
+ M backend/src/http/publicRoutes.ts
+ M backend/src/logger.ts
+ M backend/src/server.ts
+ M frontend/.env.example
+ M frontend/package.json
+ M frontend/src/admin/AdminApp.tsx
+ M frontend/src/admin/pages/LeadDetail.tsx
+ M frontend/src/admin/pages/Login.tsx
+ M frontend/src/lib/api.ts
+ M frontend/src/site/leadForm.ts
+ M frontend/src/site/sections/CtaForm.tsx
+ M n8n/credentials.manifest.json
+ M n8n/workflows/lead-intake-error-handler.json
+ M n8n/workflows/lead-intake-qualification.json
+ M package-lock.json
+ M scripts/secret-scan.mjs
+?? .dockerignore
+?? .github/
+?? backend/Dockerfile
+?? backend/scripts/start-production.mjs
+?? backend/src/db/voice.ts
+?? backend/src/http/voiceRoutes.ts
+?? backend/src/services/retell.ts
+?? backend/src/services/voice.ts
+?? backend/test/unit/voice.test.ts
+?? docs/CHANGED_FILES.txt
+?? docs/PRODUCTION_AUDIT.md
+?? docs/PRODUCTION_ENVIRONMENT.md
+?? docs/PRODUCTION_TESTING.md
+?? docs/RENDER_DEPLOYMENT.md
+?? docs/RETELL_INTEGRATION.md
+?? frontend/src/admin/VoicePanel.tsx
+?? n8n/.env.example
+?? n8n/Dockerfile
+?? n8n/build-voice-workflows.mjs
+?? n8n/production-import.mjs
+?? n8n/start-production.mjs
+?? n8n/workflows/voice-followup.json
+?? n8n/workflows/voice-outbound.json
+?? render.yaml
+?? scripts/document-env.mjs

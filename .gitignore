@@ -23,6 +23,7 @@ node_modules/
 dist/
 build/
 coverage/
+.validation/
 *.tsbuildinfo
 
 # n8n / mongo data (docker volumes live outside the repo; bind mounts would land here)

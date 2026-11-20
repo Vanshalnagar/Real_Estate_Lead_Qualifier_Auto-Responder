@@ -31,6 +31,7 @@ export const leadFormSchema = z
     budget: z.string().trim().max(60).optional().default(''),
     timeline: z.string().trim().max(60).optional().default(''),
     message: z.string().trim().max(1500).optional().default(''),
+    callConsent: z.boolean().optional().default(false),
   })
   .passthrough();
 
@@ -91,6 +92,7 @@ publicRouter.post(
       traceId: 'form_' + randomUUID(),
     });
     const out = await processInbound(inb);
+    if (f.callConsent && out.leadId) await Lead.updateOne({ _id: out.leadId, doNotCall: { $ne: true } }, { $set: { callConsent: true, callConsentAt: new Date(), callConsentSource: 'Website enquiry: optional AI callback checkbox v1' } });
     res.json(out);
   }),
 );

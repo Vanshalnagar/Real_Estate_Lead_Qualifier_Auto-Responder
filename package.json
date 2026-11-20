@@ -3,7 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "description": "Real Estate Lead Qualifier & Auto-Responder (NESTR.)",
-  "workspaces": ["frontend", "backend"],
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
@@ -25,5 +28,9 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
+  },
+  "dependencies": {
+    "@clerk/backend": "^3.26.2",
+    "@clerk/react": "^6.18.1"
   }
 }

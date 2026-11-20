@@ -1,64 +1,64 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { api } from './api';
+import { useAuth as useClerkAuth, useUser } from '@clerk/react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { api, setAuthTokenGetter } from './api';
 
 export interface User {
   id: string;
   name: string;
   email: string;
   avatar: string | null;
-  providers: ('password' | 'google')[];
+  providers: ('password' | 'google' | 'clerk')[];
   createdAt: string;
 }
 
 interface AuthCtx {
   user: User | null;
   loading: boolean;
-  googleEnabled: boolean;
   refresh: () => Promise<void>;
-  login: (email: string, password: string) => Promise<User>;
-  register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
 
-/** Customer session (httpOnly cookie set by the backend). Nothing sensitive is stored in the browser. */
+/** Synchronizes the Clerk session with the application's MongoDB customer record. */
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { getToken, isLoaded, isSignedIn, signOut } = useClerkAuth();
+  const { user: clerkUser } = useUser();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [googleEnabled, setGoogleEnabled] = useState(false);
 
-  const refresh = useCallback(async () => {
+  useEffect(() => {
+    setAuthTokenGetter(async () => (isLoaded && isSignedIn ? getToken() : null));
+    return () => setAuthTokenGetter(null);
+  }, [getToken, isLoaded, isSignedIn]);
+
+  const refresh = async () => {
+    if (!isLoaded || !isSignedIn) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     try {
-      const r = await api<{ user: User | null; google: boolean }>('/auth/me');
+      const r = await api<{ user: User | null }>('/auth/me');
       setUser(r.user);
-      setGoogleEnabled(r.google);
     } catch {
       setUser(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
+
   useEffect(() => {
     void refresh();
-  }, [refresh]);
+  }, [isLoaded, isSignedIn, clerkUser?.id]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const r = await api<{ user: User }>('/auth/login', { method: 'POST', json: { email, password } });
-    setUser(r.user);
-    return r.user;
-  }, []);
-  const register = useCallback(async (name: string, email: string, password: string) => {
-    const r = await api<{ user: User }>('/auth/register', { method: 'POST', json: { name, email, password } });
-    setUser(r.user);
-    return r.user;
-  }, []);
-  const logout = useCallback(async () => {
-    await api('/auth/logout', { method: 'POST' }).catch(() => null);
+  const logout = async () => {
+    await signOut();
     setUser(null);
-  }, []);
+  };
 
-  const value = useMemo(() => ({ user, loading, googleEnabled, refresh, login, register, logout }), [user, loading, googleEnabled, refresh, login, register, logout]);
+  const value = useMemo(() => ({ user, loading, refresh, logout }), [user, loading]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

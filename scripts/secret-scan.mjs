@@ -39,6 +39,9 @@ for (const f of ['.env', 'backend/.env', 'frontend/.env']) {
     const m = line.match(/^([A-Z0-9_]+)=(.+)$/);
     if (!m) continue;
     const [, k, v] = m;
+    // Clerk publishable keys are intentionally part of the browser bundle. Do not
+    // exempt arbitrary VITE_* keys: a misnamed backend secret must still fail.
+    if (['CLERK_PUBLISHABLE_KEY', 'VITE_CLERK_PUBLISHABLE_KEY'].includes(k) && /^pk_(test|live)_/.test(v)) continue;
     if (/(KEY|SECRET|TOKEN|PASSWORD)$|^MONGODB_URI$/.test(k) && v.length >= 12 && !v.startsWith('<')) literal.push([`value of ${k} (from ${f})`, v]);
   }
 }

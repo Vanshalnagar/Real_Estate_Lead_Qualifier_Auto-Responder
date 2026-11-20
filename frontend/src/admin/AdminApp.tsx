@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { api } from '../lib/api';
+import { api, apiBase, adminHeaders, setAdminToken } from '../lib/api';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/admin.css';
@@ -35,17 +35,38 @@ function useAdminEvents(enabled: boolean, onAlert: (e: AdminEvent) => void) {
   alertRef.current = onAlert;
   useEffect(() => {
     if (!enabled) return;
-    const es = new EventSource('/api/admin/events', { withCredentials: true });
-    es.onmessage = (m) => {
+    const abort = new AbortController();
+    const receive = (data: string) => {
       try {
-        const e = JSON.parse(m.data) as AdminEvent;
+        const e = JSON.parse(data) as AdminEvent;
         setState((s) => ({ tick: s.tick + 1, last: e }));
         if (e.type === 'broker.alert' || (e.type === 'lead.created' && e.urgency === 'high')) alertRef.current(e);
       } catch {
         /* ignore */
       }
     };
-    return () => es.close();
+    const connect = async () => {
+      while (!abort.signal.aborted) {
+        try {
+          const response = await fetch(`${apiBase}/admin/events`, { credentials: 'include', headers: adminHeaders(), signal: abort.signal });
+          if (!response.ok || !response.body) return;
+          const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = '';
+          while (!abort.signal.aborted) {
+            const { value, done } = await reader.read(); if (done) break;
+            buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, '\n');
+            let end: number;
+            while ((end = buffer.indexOf('\n\n')) !== -1) {
+              const frame = buffer.slice(0, end); buffer = buffer.slice(end + 2);
+              const data = frame.split('\n').filter(line => line.startsWith('data:')).map(line => line.slice(5).trimStart()).join('\n');
+              if (data) receive(data);
+            }
+          }
+        } catch { if (abort.signal.aborted) return; }
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+    };
+    void connect();
+    return () => abort.abort();
   }, [enabled]);
   return state;
 }
@@ -93,6 +114,7 @@ export default function AdminApp() {
 
   const logout = async () => {
     await api('/admin/auth/logout', { method: 'POST' }).catch(() => null);
+    setAdminToken(null);
     setMe(null);
     nav('/admin');
   };

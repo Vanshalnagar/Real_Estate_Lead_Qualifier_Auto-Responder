@@ -1,4 +1,7 @@
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+import { VoiceCall, VoiceEvent, VoiceNumberLock } from './db/voice.js';
+import { startVoiceWorker } from './services/voice.js';
 import { createApp } from './app.js';
 import { config } from './config.js';
 import { connectDb } from './db/connect.js';
@@ -19,13 +22,20 @@ async function ensureAdmin() {
 async function main() {
   await connectDb();
   await ensureAdmin();
+  await Promise.all([VoiceCall.init(), VoiceEvent.init(), VoiceNumberLock.init()]);
+  const stopVoice = startVoiceWorker();
   startApifyScheduler();
   const app = createApp();
-  app.listen(config.PORT, () => {
+  const server = app.listen(config.PORT, '0.0.0.0', () => {
     logger.info(
       { port: config.PORT, n8n: config.N8N_ENABLED ? config.N8N_WEBHOOK_URL : 'disabled', whatsapp: config.WHATSAPP_PROVIDER },
       'NESTR. backend listening',
     );
+  });
+  for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => {
+    stopVoice();
+    server.close(() => { void mongoose.disconnect().finally(() => process.exit(0)); });
+    setTimeout(() => process.exit(1), 20000).unref();
   });
 }
 

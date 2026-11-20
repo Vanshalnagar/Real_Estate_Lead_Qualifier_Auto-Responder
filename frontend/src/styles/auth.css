@@ -40,7 +40,13 @@
 
 /* ---------------------------------------------------------------- auth page */
 .auth {
-  padding: 12px;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 132px 24px 32px;
+}
+.auth > .cl-rootBox {
+  width: min(100%, 420px);
 }
 .auth__box {
   position: relative;
@@ -286,7 +292,7 @@
 }
 @media (max-width: 809px) {
   .auth {
-    padding: 8px;
+    padding: 112px 16px 24px;
   }
   .auth__inner {
     padding: 110px 16px 24px;

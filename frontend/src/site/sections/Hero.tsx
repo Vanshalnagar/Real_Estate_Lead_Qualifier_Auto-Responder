@@ -1,6 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Fragment, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react';
-import { Button, PhoneButton } from '../../components/Button';
+import { PhoneButton } from '../../components/Button';
 import { CheckCircle, IconSpark, Leaf, Send, Star } from '../../components/Icons';
 import { SPRING } from '../../components/Motion';
 import { useChat } from '../../lib/chat';
@@ -137,7 +137,6 @@ function AiSearch() {
 }
 
 export function Hero() {
-  const { openChat } = useChat();
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const [spot, setSpot] = useState({ x: -999, y: -999, on: false });
@@ -193,13 +192,6 @@ export function Hero() {
                 <PhoneButton phone={BRAND.phone} glow />
               </motion.div>
             </div>
-            <motion.div className="hero__card" {...rise(0.6)}>
-              <img src="/images/site/hero-card.jpg" alt="Minimal white modern home" className="hero__card-img" />
-              <div className="hero__card-body">
-                <p className="h4 hero__card-title">{HERO.card.title}</p>
-                <Button label={HERO.card.cta} variant="outline" onClick={() => openChat()} />
-              </div>
-            </motion.div>
           </div>
           <motion.div className="hero__divider" {...rise(0.7)} />
           <motion.div className="hero__bottom" {...rise(0.75)}>

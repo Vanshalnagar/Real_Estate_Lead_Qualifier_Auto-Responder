@@ -12,6 +12,7 @@ import { internalRouter } from './http/internalRoutes.js';
 import { errorHandler } from './http/middleware.js';
 import { publicRouter } from './http/publicRoutes.js';
 import { webhookRouter } from './http/webhookRoutes.js';
+import { retellWebhook } from './http/voiceRoutes.js';
 
 export function createApp() {
   const app = express();
@@ -19,6 +20,14 @@ export function createApp() {
   app.disable('x-powered-by');
   app.use(helmet());
   app.use(cors({ origin: config.CORS_ORIGIN.split(',').map((s) => s.trim()), credentials: true }));
+  app.post('/api/webhooks/retell', express.raw({ type: 'application/json', limit: '5mb' }), retellWebhook);
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/admin') && !['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+      const origin = req.header('origin');
+      if ((origin && !config.CORS_ORIGIN.split(',').map(s => s.trim()).includes(origin)) || (!origin && req.headers.cookie)) return res.status(403).json({ ok: false, error: 'Untrusted request origin' });
+    }
+    next();
+  });
   app.use(
     express.json({
       limit: '200kb',
@@ -40,7 +49,7 @@ export function createApp() {
     }),
   );
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, db: dbState() }));
+  app.get('/api/health', (_req, res) => res.status(dbState() === 'up' ? 200 : 503).json({ ok: dbState() === 'up', db: dbState() }));
   app.use('/api/auth', authRouter);
   app.use('/api', publicRouter);
   app.use('/api/webhooks', webhookRouter);

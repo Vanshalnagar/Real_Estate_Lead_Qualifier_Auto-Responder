@@ -1,0 +1,115 @@
+{
+  "id": "nestrVoiceFollowup1",
+  "name": "Voice — Post-call Follow-up",
+  "active": false,
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Authenticated notification",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "nestrVoiceFollowup1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nestrCredIntrnl1",
+          "name": "Backend Internal Secret"
+        }
+      },
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-followup",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "get",
+      "name": "Retrieve authoritative call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nestrCredIntrnl1",
+          "name": "Backend Internal Secret"
+        }
+      },
+      "parameters": {
+        "url": "={{ $env.BACKEND_INTERNAL_URL }}/api/internal/voice/calls/{{ $json.body.callId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "apply",
+      "name": "Apply category and broker follow-up idempotently",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nestrCredIntrnl1",
+          "name": "Backend Internal Secret"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_INTERNAL_URL }}/api/internal/voice/calls/{{ $json.call._id }}/followup",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={}",
+        "options": {
+          "timeout": 20000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Authenticated notification": {
+      "main": [
+        [
+          {
+            "node": "Retrieve authoritative call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve authoritative call": {
+      "main": [
+        [
+          {
+            "node": "Apply category and broker follow-up idempotently",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "errorWorkflow": "nestrErrorHndlr1"
+  },
+  "pinData": {},
+  "tags": [],
+  "versionId": "739c9570-3f75-0a97-a1ae-3054ea6b26ad"
+}

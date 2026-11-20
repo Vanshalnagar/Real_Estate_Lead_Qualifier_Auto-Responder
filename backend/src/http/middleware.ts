@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ZodError, type ZodSchema } from 'zod';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
+import { VoiceError } from '../services/retell.js';
 
 export const AUTH_COOKIE = 'nestr_admin';
 
@@ -27,13 +28,15 @@ export function requireInternalSecret(req: Request, res: Response, next: NextFun
 export interface AdminClaims {
   sub: string;
   email: string;
+  exp?: number;
 }
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.[AUTH_COOKIE];
+  const bearer = req.header('authorization');
+  const token = config.ADMIN_BEARER_AUTH && bearer?.startsWith('Bearer ') ? bearer.slice(7) : req.cookies?.[AUTH_COOKIE];
   if (!token) return res.status(401).json({ ok: false, error: 'not signed in' });
   try {
-    (req as Request & { admin: AdminClaims }).admin = jwt.verify(token, config.JWT_SECRET) as AdminClaims;
+    (req as Request & { admin: AdminClaims }).admin = jwt.verify(token, config.JWT_SECRET, { algorithms: ['HS256'] }) as AdminClaims;
     next();
   } catch {
     res.status(401).json({ ok: false, error: 'session expired' });
@@ -59,6 +62,7 @@ export const asyncH =
     fn(req, res, next).catch(next);
 
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
+  if (err instanceof VoiceError) return res.status(err.status).json({ ok: false, error: err.message });
   if (err instanceof ZodError) {
     return res.status(400).json({ ok: false, error: 'validation', issues: err.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) });
   }

@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { voiceAdminRouter } from './voiceRoutes.js';
 import { Router, type Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
@@ -33,14 +34,14 @@ adminRouter.post(
       return res.status(401).json({ ok: false, error: 'Invalid email or password' });
     }
     const token = jwt.sign({ sub: String(admin._id), email: admin.email } satisfies AdminClaims, config.JWT_SECRET, { expiresIn: '12h' });
-    res.cookie(AUTH_COOKIE, token, {
+    if (!config.ADMIN_BEARER_AUTH) res.cookie(AUTH_COOKIE, token, {
       httpOnly: true,
       sameSite: 'strict',
       secure: config.NODE_ENV === 'production',
       maxAge: 12 * 60 * 60 * 1000,
       path: '/',
     });
-    res.json({ ok: true, email: admin.email });
+    res.json({ ok: true, email: admin.email, ...(config.ADMIN_BEARER_AUTH ? { token } : {}) });
   }),
 );
 
@@ -50,6 +51,7 @@ adminRouter.post('/auth/logout', (_req, res) => {
 });
 
 adminRouter.use(requireAdmin);
+adminRouter.use('/voice', voiceAdminRouter);
 adminRouter.get('/auth/me', (req, res) => res.json({ ok: true, email: (req as AReq).admin.email }));
 
 // --- dashboard ---------------------------------------------------------------------------------
@@ -329,8 +331,11 @@ adminRouter.get('/events', (req, res) => {
   const onEvent = (e: AdminEvent) => res.write(`data: ${JSON.stringify(e)}\n\n`);
   bus.on('admin', onEvent);
   const ping = setInterval(() => res.write(': ping\n\n'), 25000);
+  const expiry = (req as AReq).admin.exp;
+  const expire = setTimeout(() => res.end(), expiry ? Math.max(1, expiry * 1000 - Date.now()) : 12 * 60 * 60 * 1000);
   req.on('close', () => {
     clearInterval(ping);
+    clearTimeout(expire);
     bus.off('admin', onEvent);
   });
 });

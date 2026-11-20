@@ -1,10 +1,10 @@
 /** All customer-site copy for the fictional NESTR. agency. */
 export const BRAND = {
   name: 'NESTR',
-  phone: '+91 80 4567 8900',
+  phone: '+91 77780 51665',
   whatsapp: '+91 98000 12345',
-  email: 'hello@nestr.example',
-  address: ['4th Floor, Prestige Meridian', 'MG Road, Bengaluru 560001'],
+  email: 'contact@nestr.com',
+  address: ['4th Floor, Prestige Meridian', 'MG Road, Ahmedabad 382481'],
 };
 
 export const NAV_LINKS = [

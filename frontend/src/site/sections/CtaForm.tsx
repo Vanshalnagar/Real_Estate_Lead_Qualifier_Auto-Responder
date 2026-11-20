@@ -77,7 +77,7 @@ export function CtaForm() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const raw = Object.fromEntries(fd.entries()) as Record<string, string>;
-    const parsed = leadFormSchema.safeParse(raw);
+    const parsed = leadFormSchema.safeParse({ ...raw, callConsent: raw.callConsent === 'on' });
     if (!parsed.success) {
       const errs: Errors = {};
       for (const i of parsed.error.issues) errs[String(i.path[0])] = i.message;
@@ -152,6 +152,7 @@ export function CtaForm() {
                     {field('timeline', <input className="input" name="timeline" placeholder="Timeline (e.g. next month)" aria-label="Timeline" />)}
                   </div>
                   {field('message', <textarea className="textarea" name="message" placeholder="Tell us about your requirement…" aria-label="Message" />)}
+                  <label><input type="checkbox" name="callConsent" /> I agree to receive an AI-assisted callback from NESTR about this enquiry.</label>
                   {HONEYPOTS.map((h) => (
                     <input key={h} type="text" name={h} className="hp" tabIndex={-1} autoComplete="off" aria-hidden />
                   ))}

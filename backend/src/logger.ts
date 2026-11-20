@@ -10,6 +10,7 @@ export const logger = pino({
       'req.headers.cookie',
       'req.headers["x-internal-secret"]',
       'req.headers["x-hub-signature-256"]',
+      'req.headers["x-retell-signature"]',
       'res.headers["set-cookie"]',
       '*.password',
       '*.token',
